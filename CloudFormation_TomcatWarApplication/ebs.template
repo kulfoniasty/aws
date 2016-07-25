@@ -1,0 +1,103 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "KeyName": {
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
+    "VPC": {
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "Subnet": {
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "Bucket": {
+      "Type": "String",
+      "Description": "Name of a bucket in which the WAR file is stored"
+    },
+    "WARfile": {
+      "Type": "String",
+      "Description": "Name of a WAR file to be deployed"
+    }
+  },
+  "Resources": {
+    "TestApp": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "Description": "Test java app"
+      }
+    },
+    "FirstVersion": {
+      "Type": "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties": {
+        "ApplicationName": {"Ref": "TestApp"},
+        "Description": "v1",
+        "SourceBundle": {
+          "S3Bucket": {"Ref": "Bucket"},
+          "S3Key": {"Ref": "WARfile"}
+        }
+      }
+    },
+    "WebServerRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Statement"  : [{
+            "Effect"   : "Allow",
+            "Principal": { "Service": ["ec2.amazonaws.com"] },
+            "Action"   : [ "sts:AssumeRole" ]
+          } ]
+        },
+        "Path": "/"
+      }
+    },
+    "TestInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ {"Ref": "WebServerRole"} ]
+      }
+    },
+    "ConfigTemplate": {
+      "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
+      "Properties": {
+        "ApplicationName": {"Ref": "TestApp"},
+        "Description": "config",
+        "OptionSettings": [
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MinSize",
+            "Value": "2"
+          },
+          {
+            "Namespace": "aws:autoscaling:asg",
+            "OptionName": "MaxSize",
+            "Value": "6"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "LoadBalanced"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "IamInstanceProfile",
+            "Value": { "Ref": "TestInstanceProfile" }
+          }
+
+        ],
+        "SolutionStackName": "64bit Amazon Linux 2016.03 v2.1.0 running Tomcat 8 Java 8"
+      }
+    },
+
+    "DevEnv": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": {"Ref": "TestApp"},
+        "Description": "Dev Env",
+        "TemplateName": {"Ref": "ConfigTemplate"},
+        "VersionLabel": {"Ref": "FirstVersion"}
+      },
+      "DependsOn": "FirstVersion"
+    }
+  }
+}
