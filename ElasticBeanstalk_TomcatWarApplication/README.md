@@ -19,7 +19,14 @@ aws s3 cp ./java-app/build/libs/java-app-1.0.war s3://your.unique.bucket.name/wa
 ```
 ### 3. Create CloudFormation stack 
 ```
-aws cloudformation create-stack --stack-name=simple-war-app --template-body=file:///path-to-the-template/ebs.template --parameters ParameterKey=KeyName,ParameterValue=EC2key ParameterKey=VPC,ParameterValue=vpc ParameterKey=Subnet,ParameterValue=subnet ParameterKey=Bucket,ParameterValue=your.bucket ParameterKey=WARfile,ParameterValue=WARname --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --stack-name=simple-war-app \
+    --template-body=file:///path-to-the-template/ebs.template \
+    --parameters ParameterKey=KeyName,ParameterValue=EC2key \ 
+        ParameterKey=VPC,ParameterValue=vpc \ 
+        ParameterKey=Subnet,ParameterValue=subnet \
+        ParameterKey=Bucket,ParameterValue=your.bucket \
+        ParameterKey=WARfile,ParameterValue=WARname \
+    --capabilities CAPABILITY_IAM
 ```
 ### 4 Check your stacks using AWS console
 And navigate to the LoadBalancer resource and its DNS
