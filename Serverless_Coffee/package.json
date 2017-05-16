@@ -1,0 +1,15 @@
+{
+  "name": "serverless-coffee",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "kulfoniasty/aws/Serverless_Coffee"
+  },
+  "author": "Grzegorz Musiał (grzegorz@musial.tk)",
+  "license": "UNLICENSED"
+}
