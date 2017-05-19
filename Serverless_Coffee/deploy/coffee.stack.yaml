@@ -6,7 +6,7 @@ Resources:
     Properties:
       Handler: index.get
       Runtime: nodejs6.10
-      CodeUri: s3://musial-grzegorz-serverless-coffee-app/{USERNAME_HERE}/app.zip
+      CodeUri: s3://musial-grzegorz-serverless-coffee-app/ext-musigr/app.zip
       Policies: AWSLambdaRole
       Events:
         GetResource:
@@ -14,6 +14,22 @@ Resources:
           Properties:
             Path: /availabilities/
             Method: get
+  OnDbChangeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.onDbChange
+      Runtime: nodejs6.10
+      CodeUri: s3://musial-grzegorz-serverless-coffee-app/ext-musigr/app.zip
+      Policies: AmazonDynamoDBReadOnlyAccess
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: arn:aws:dynamodb:eu-west-1:265463167799:table/coffee-musigr/stream/2017-05-19T07:12:02.265
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 1
+
+
   ConfigLambdaPermission:
       Type: AWS::Lambda::Permission
       DependsOn:
