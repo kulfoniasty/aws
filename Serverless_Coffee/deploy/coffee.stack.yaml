@@ -1,9 +1,15 @@
-AWSTemplateFormatVerion '2010-09-09'
-Transform 'AWS::Serverless-2016-10-31'
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
 Resources:
-  GetAvFunction:
+  ListAvFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.get
       Runtime: nodejs6.10
-      CodeUri:
+      CodeUri: s3://musial-grzegorz-serverless-coffee-app/{USERNAME_HERE}/app.zip
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /availabilities/
+            Method: get

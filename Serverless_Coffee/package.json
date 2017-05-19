@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "s3upload": "echo %USERNAME% && rm deploy/app.zip && bestzip deploy/app.zip app/* && aws s3 cp deploy/app.zip s3://musial-grzegorz-serverless-coffee-app/%USERNAME%/app.zip",
+    "deploy": "aws cloudformation deploy --template-file deploy/coffee.stack.yaml --stack-name coffee-%USERNAME% --capabilities CAPABILITY_IAM",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
