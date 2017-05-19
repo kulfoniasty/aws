@@ -7,9 +7,18 @@ Resources:
       Handler: index.get
       Runtime: nodejs6.10
       CodeUri: s3://musial-grzegorz-serverless-coffee-app/{USERNAME_HERE}/app.zip
+      Policies: AWSLambdaRole
       Events:
         GetResource:
           Type: Api
           Properties:
             Path: /availabilities/
             Method: get
+  ConfigLambdaPermission:
+      Type: AWS::Lambda::Permission
+      DependsOn:
+      - ListAvFunction
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !Ref ListAvFunction
+        Principal: apigateway.amazonaws.com
