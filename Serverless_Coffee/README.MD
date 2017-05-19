@@ -13,3 +13,14 @@ http://docs.aws.amazon.com/cli/latest/userguide/awscli-install-windows.html
 
 ## Permissions fix
 https://github.com/awslabs/serverless-application-model/issues/59
+
+```
+  ConfigLambdaPermission:
+      Type: AWS::Lambda::Permission
+      DependsOn:
+      - ListAvFunction
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !Ref ListAvFunction
+        Principal: apigateway.amazonaws.com
+        ```
